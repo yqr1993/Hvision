@@ -119,11 +119,12 @@ def capture_one_current_frame(save_full_path):
 
 # find the target you just upload by call func of "upload_icon"
 # @param "icon_name" is the icon filename, is the key of the icon you just uploadding , etc "icon.png"
+# @param "OV" is the confidence threshold of icon detection
 # @param "save_full_path" is the full path to save the render image you want anywhere , etc "/home/xxx/xxx/icon.png"
 # @param "if_save_show_image" decide whether to save render image , 1 : i want , 0 : i dont want
 # notice! only support jpg image file
-def find_icon_in_frame(icon_name, if_save_show_image, save_full_path=""):
-    data = http_post("http://{}:{}/findIcon".format(ip, port), {"iconName": icon_name, "saveShow": if_save_show_image})
+def find_icon_in_frame(icon_name, OV, if_save_show_image, save_full_path=""):
+    data = http_post("http://{}:{}/findIcon".format(ip, port), {"iconName": icon_name, "OV": OV, "saveShow": if_save_show_image})
 
     if if_save_show_image:
         if data["image"]:
@@ -181,11 +182,12 @@ def measure_the_pixel_point(pts):
 
 # measure the device screen size you want, this will return more than one if there is not just one target
 # @param "icon_name" the screen template you upload, so just one kind screen will be detected at the same time
+# @param "OV" is the confidence threshold of icon detection
 # @param "shape" you should define the shape of the screen by yourself
-def get_device_size(icon_name, shape):
+def get_device_size(icon_name, OV, shape):
     size_info_ret = []
 
-    rect_data = find_icon_in_frame(icon_name, 1, "sss.jpg")
+    rect_data = find_icon_in_frame(icon_name, OV, 1, "capture_save.jpg")
     if not rect_data:
         return size_info_ret
     
@@ -220,8 +222,9 @@ def get_device_size(icon_name, shape):
 
 # measure the icons just detected by template
 # @param "icon_name" the icon template you upload, so just one kind icon will be detected at the same time
-def find_icon_in_frame_and_measure_them(icon_name):
-    rect_data = find_icon_in_frame(icon_name, 1, "sss.jpg")
+# @param "OV" is the confidence threshold of icon detection
+def find_icon_in_frame_and_measure_them(icon_name, OV):
+    rect_data = find_icon_in_frame(icon_name, OV, 1, "capture_save.jpg")
     if not rect_data:
         return []
 
@@ -229,20 +232,3 @@ def find_icon_in_frame_and_measure_them(icon_name):
     m_ret = measure_the_pixel_point(pts_data)
 
     return m_ret
-
-
-init_the_visual_detection("config.ini")
-init_the_ocr()
-#find_text()
-#capture_one_current_frame("save.jpg")
-upload_icon("shineipaobu.png", "shineipaobu.png")
-find_icon_in_frame("shineipaobu.png", 1, "check_icon.jpg")
-#while 1:
-#    del_all_target()
-#    upload_icon("{}.png".format("icon"), "{}.png".format("icon"))
-#    rect_data = find_icon_in_frame("icon.png", 1, "sss.jpg")
-
-#pts_data = [[pp[0], pp[1]] for pp in rect_data]
-#measure_the_pixel_point(pts_data)
-#pts_data = find_text()
-#measure_the_pixel_point(pts_data)
