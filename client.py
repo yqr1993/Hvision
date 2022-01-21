@@ -86,10 +86,10 @@ def init_the_ocr():
 # upload the icon to the server and load in progress memory
 # @param "icon_full_path" is the full path in master pc of the icon you prepare to upload, etc "/home/xxx/xxx/icon.png"
 # @param "keyFn" is the icon filename , etc "icon.png"
-# @param "scale" is the detection size range(+- scale / 2), correlated to instruction speed(the bigger, the slower)
-# @param "Volume" is the max quentity of template that user uploads
+# @param "scale" is the detection size range, correlated to instruction speed(the bigger, the slower), default 10
+# @param "Volume" is the max quentity of template that user uploads, default 100
 # notice! only support jpg image file and png image file
-def upload_icon(icon_full_path, keyFn, scale, Volume):
+def upload_icon(icon_full_path, keyFn, scale=10, Volume=100):
     data = http_post("http://{}:{}/loadIcon".format(ip, port), {"keyFn": keyFn, "scale": scale, "Volume": Volume}, post_files = {"iconFile": open(icon_full_path, "rb")})
     print(data)
 
