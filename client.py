@@ -63,9 +63,9 @@ def compile_text(gt, ft, is_restrict=True):
 
 
 # init the vision core
-# config file path
-def init_the_visual_detection(config_full_path):
-    data = http_post("http://{}:{}/initVision".format(ip, port), {}, post_files = {"configFile": open(config_full_path, "rb")})
+# camera usb id, if only one, then set 0
+def init_the_visual_detection(camera_id=0):
+    data = http_post("http://{}:{}/initCamera".format(ip, port), {"camera_id": camera_id})
     print(data)
 
 
@@ -84,11 +84,13 @@ def init_the_ocr():
 
 
 # upload the icon to the server and load in progress memory
-# @param "icon_name" is the icon filename , etc "icon.png"
 # @param "icon_full_path" is the full path in master pc of the icon you prepare to upload, etc "/home/xxx/xxx/icon.png"
+# @param "keyFn" is the icon filename , etc "icon.png"
+# @param "scale" is the detection size range(+- scale / 2), correlated to instruction speed(the bigger, the slower)
+# @param "Volume" is the max quentity of template that user uploads
 # notice! only support jpg image file and png image file
-def upload_icon(icon_name, icon_full_path):
-    data = http_post("http://{}:{}/loadIcon".format(ip, port), {"iconName": icon_name}, post_files = {"iconFile": open(icon_full_path, "rb")})
+def upload_icon(icon_full_path, keyFn, scale, Volume):
+    data = http_post("http://{}:{}/loadIcon".format(ip, port), {"keyFn": keyFn, "scale": scale, "Volume": Volume}, post_files = {"iconFile": open(icon_full_path, "rb")})
     print(data)
 
 
@@ -162,10 +164,10 @@ def find_text():
 
 # measure the pixel point
 # @param "pts" the points you want to measure
-def measure_the_pixel_point(pts):
+def measure_the_pixel_point(pts, fx=641.908787, cx=688.383484, fy=639.740430, cy=374.862427, Zc=245.0):
     ret = []
     for p in pts:
-        rdr = http_post("http://{}:{}/measureXY".format(ip, port), {"x": p[0], "y": p[1]})
+        rdr = http_post("http://{}:{}/measureXY".format(ip, port), {"x": p[0], "y": p[1], "fx": fx, "cx": cx, "fy": fy, "cy": cy, "Zc": Zc})
         ret.append(rdr["xyz"])
     print(ret)
 
